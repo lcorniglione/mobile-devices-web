@@ -1,6 +1,8 @@
 import styled from 'styled-components/macro';
 import {useTheme} from 'styled-components';
 import {FiShoppingCart} from 'react-icons/fi';
+import {useParams} from 'react-router-dom';
+import {useForm} from 'react-hook-form';
 
 import {
   Card,
@@ -14,71 +16,12 @@ import {
   Dropdown,
   Option,
   PrimaryButton,
+  Spinner,
+  Form,
+  FormElement,
 } from 'components/styled';
 import * as mq from 'styles/mediaQueries';
-
-const product = {
-  id: 'xyPoqGJxYR4Nn3yVGQcfI',
-  brand: 'Acer',
-  model: 'Iconia Tab 10 A3-A40',
-  price: '230',
-  imgUrl:
-    'https://front-test-api.herokuapp.com/images/xyPoqGJxYR4Nn3yVGQcfI.jpg',
-  networkTechnology: 'No cellular connectivity',
-  networkSpeed: '',
-  gprs: 'No',
-  edge: 'No',
-  announced: '2016  April',
-  status: 'Available. Released 2016  June',
-  dimentions: '259 x 167 x 8.9 mm (10.20 x 6.57 x 0.35 in)',
-  weight: '',
-  sim: 'No',
-  displayType: 'IPS LCD capacitive touchscreen  16M colors',
-  displayResolution: '10.1 inches (~68.4% screen-to-body ratio)',
-  displaySize: '1920 x 1200 pixels (~224 ppi pixel density)',
-  os: 'Android 6.0 (Marshmallow)',
-  cpu: 'Quad-core 1.3 GHz Cortex-A53',
-  chipset: 'Mediatek MT8163A',
-  gpu: 'Mali-T720 MP2',
-  externalMemory: 'microSD  up to 256 GB (dedicated slot)',
-  internalMemory: ['16 GB', '32 GB', '64 GB'],
-  ram: '2 GB RAM',
-  primaryCamera: '5 MP',
-  secondaryCmera: '2 MP',
-  speaker: 'Yes with stereo speakers (4 speakers)',
-  audioJack: 'Yes',
-  wlan: ['Wi-Fi 802.11 a/b/g/n/ac', 'dual-band', 'hotspot'],
-  bluetooth: 'Yes',
-  gps: '',
-  nfc: '',
-  radio: 'No',
-  usb: 'microUSB 2.0',
-  sensors: 'Accelerometer',
-  battery: 'Non-removable Li-Ion battery',
-  colors: ['Black'],
-  options: {
-    colors: [
-      {
-        code: 1000,
-        name: 'Black',
-      },
-    ],
-    storages: [
-      {
-        code: 2000,
-        name: '16 GB',
-      },
-      {
-        code: 2001,
-        name: '32 GB',
-      },
-      {
-        code: 2002,
-        name: '64 GB',
-      },
-    ],
-  },
-};
+import {useDevice, useAddItemToCart} from 'hooks/devices';
 
 const ProductDetailGrid = styled(Grid)({
   [mq.medium]: {
@@ -106,8 +49,30 @@ const TextFlex = styled(Flex)({
 
 function ProductDetail() {
   const theme = useTheme();
-  return (
-    <Container>
+  let {id: deviceId} = useParams();
+  const {data: product, isLoading} = useDevice(deviceId);
+  const {mutate: handleAddItem, isLoading: isLoadingItemToCart} =
+    useAddItemToCart();
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+  } = useForm({
+    defaultValues: {colorCode: '', storageCode: ''},
+    shouldFocusError: false,
+  });
+
+  function handleAddItemToCart(data) {
+    handleAddItem({
+      id: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
+      ...data,
+    });
+  }
+
+  let view = null;
+  if (isLoading) view = <Spinner size={24} />;
+  else {
+    view = (
       <ProductDetailGrid
         columns={2}
         columns-s={1}
@@ -201,44 +166,57 @@ function ProductDetail() {
           </DetailCard>
           <DetailCard>
             <H4>Acciones</H4>
-            <Flex direction="column" gap={theme.space[1]}>
-              <Flex
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Dropdown label="Color">
-                  <Option selected value="Click to see options" />
-                  <Option value="Option 1" />
-                  <Option value="Option 2" />
-                  <Option value="Option 3" />
-                </Dropdown>
-              </Flex>
+            <Form onSubmit={handleSubmit(handleAddItemToCart)}>
+              <Flex direction="column" gap={theme.space[3]}>
+                <FormElement error={errors.colorCode}>
+                  <Dropdown
+                    label="Color"
+                    {...register('colorCode', {
+                      required: {message: 'Campo Requerido', value: true},
+                    })}
+                    id="color"
+                  >
+                    <Option disabled value="" label="Seleccione uno" />
+                    <Option value="1" label="Blanco" />
+                    <Option value="2" label="Negro" />
+                  </Dropdown>
+                </FormElement>
+                <FormElement error={errors.storageCode}>
+                  <Dropdown
+                    label="Almacenamiento"
+                    {...register('storageCode', {
+                      required: {
+                        message: 'Campo Requerido',
+                        value: true,
+                      },
+                    })}
+                    id="storage"
+                  >
+                    <Option disabled value="" label="Seleccione uno" />
+                    <Option value="1" label="64gb" />
+                    <Option value="2" label="128gb" />
+                  </Dropdown>
+                </FormElement>
 
-              <Flex
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Dropdown label="Almacenamiento">
-                  <Option selected value="Click to see options" />
-                  <Option value="Option 1" />
-                  <Option value="Option 2" />
-                  <Option value="Option 3" />
-                </Dropdown>
+                <PrimaryButton type="submit" disabled={isLoadingItemToCart}>
+                  <Flex alignItems="center" justifyContent="center">
+                    Agregar al Carrito
+                    {isLoadingItemToCart ? (
+                      <Spinner css={{marginLeft: 10}} />
+                    ) : (
+                      <FiShoppingCart css={{marginLeft: 10}} />
+                    )}
+                  </Flex>
+                </PrimaryButton>
               </Flex>
-
-              <PrimaryButton>
-                <Flex alignItems="center" justifyContent="center">
-                  Agregar al Carrito <FiShoppingCart css={{marginLeft: 10}} />
-                </Flex>
-              </PrimaryButton>
-            </Flex>
+            </Form>
           </DetailCard>
         </Flex>
       </ProductDetailGrid>
-    </Container>
-  );
+    );
+  }
+
+  return <Container>{view}</Container>;
 }
 
 export default ProductDetail;

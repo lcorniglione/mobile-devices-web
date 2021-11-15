@@ -10,6 +10,7 @@ const Button = styled.button({
   minWidth: 100,
   fontFamily: fontSemiBold,
   borderRadius: 10,
+  border: 0,
 });
 
 export const PrimaryButton = styled(Button)({
@@ -30,5 +31,12 @@ export const PrimaryButton = styled(Button)({
     backgroundColor: p => p.theme.colors.primary300,
     borderColor: p => p.theme.colors.primary300,
     color: p => p.theme.colors.black,
+  },
+
+  '&:disabled': {
+    backgroundColor: p => p => p.theme.colors.gray,
+    borderColor: p => p.theme.colors.black,
+    color: p => p.theme.colors.white,
+    cursor: 'default',
   },
 });
