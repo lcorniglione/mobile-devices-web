@@ -1,5 +1,6 @@
 import styled from 'styled-components/macro';
 import {useTheme} from 'styled-components';
+import {FiShoppingCart} from 'react-icons/fi';
 
 import {
   Card,
@@ -10,6 +11,9 @@ import {
   H4,
   H5,
   H3,
+  Dropdown,
+  Option,
+  PrimaryButton,
 } from 'components/styled';
 import * as mq from 'styles/mediaQueries';
 
@@ -197,6 +201,39 @@ function ProductDetail() {
           </DetailCard>
           <DetailCard>
             <H4>Acciones</H4>
+            <Flex direction="column" gap={theme.space[1]}>
+              <Flex
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Dropdown label="Color">
+                  <Option selected value="Click to see options" />
+                  <Option value="Option 1" />
+                  <Option value="Option 2" />
+                  <Option value="Option 3" />
+                </Dropdown>
+              </Flex>
+
+              <Flex
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Dropdown label="Almacenamiento">
+                  <Option selected value="Click to see options" />
+                  <Option value="Option 1" />
+                  <Option value="Option 2" />
+                  <Option value="Option 3" />
+                </Dropdown>
+              </Flex>
+
+              <PrimaryButton>
+                <Flex alignItems="center" justifyContent="center">
+                  Agregar al Carrito <FiShoppingCart css={{marginLeft: 10}} />
+                </Flex>
+              </PrimaryButton>
+            </Flex>
           </DetailCard>
         </Flex>
       </ProductDetailGrid>
