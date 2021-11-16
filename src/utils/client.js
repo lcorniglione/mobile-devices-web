@@ -1,5 +1,3 @@
-const apiURL = process.env.REACT_APP_API_URL;
-
 async function client(
   endpoint,
   {data, token, headers: customHeaders, ...customConfig} = {},
@@ -15,7 +13,8 @@ async function client(
     ...customConfig,
   };
 
-  return window.fetch(apiURL + endpoint, config).then(async response => {
+  return window.fetch(endpoint, config).then(async response => {
+    console.log(endpoint, response);
     const data = await response.json();
     if (response.ok) {
       return data;
