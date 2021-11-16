@@ -35,6 +35,7 @@ export const defaultTheme = {
     white: '#fff',
     black: 'hsl(28, 83%, 7%)',
     background: '#FAFFEB',
+    gray: '#D3D3D3',
 
     primary600: 'hsl(136, 14%, 21%)',
     primary300: '#ADC1B2',

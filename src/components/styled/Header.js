@@ -6,8 +6,8 @@ export const Header = styled.nav({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: 'flex-end',
-  padding: p => `0 ${p.theme.space[3]} 0 0`,
+  justifyContent: 'space-between',
+  padding: p => `0 ${p.theme.space[5]} 0 ${p.theme.space[5]}`,
   width: '100%',
   boxShadow: `
   0px 0.1px 0.3px rgba(0, 0, 0, 0.006),

@@ -1,6 +1,8 @@
 import styled from 'styled-components/macro';
 import {useTheme} from 'styled-components';
 import {FiShoppingCart} from 'react-icons/fi';
+import {useParams} from 'react-router-dom';
+import {useForm} from 'react-hook-form';
 
 import {
   Card,
@@ -14,78 +16,27 @@ import {
   Dropdown,
   Option,
   PrimaryButton,
+  Spinner,
+  Form,
+  FormElement,
+  Image,
 } from 'components/styled';
 import * as mq from 'styles/mediaQueries';
+import {useDevice, useAddItemToCart} from 'hooks/devices';
+import {fontBold} from 'styles';
+import dict from 'utils/dict';
 
-const product = {
-  id: 'xyPoqGJxYR4Nn3yVGQcfI',
-  brand: 'Acer',
-  model: 'Iconia Tab 10 A3-A40',
-  price: '230',
-  imgUrl:
-    'https://front-test-api.herokuapp.com/images/xyPoqGJxYR4Nn3yVGQcfI.jpg',
-  networkTechnology: 'No cellular connectivity',
-  networkSpeed: '',
-  gprs: 'No',
-  edge: 'No',
-  announced: '2016  April',
-  status: 'Available. Released 2016  June',
-  dimentions: '259 x 167 x 8.9 mm (10.20 x 6.57 x 0.35 in)',
-  weight: '',
-  sim: 'No',
-  displayType: 'IPS LCD capacitive touchscreen  16M colors',
-  displayResolution: '10.1 inches (~68.4% screen-to-body ratio)',
-  displaySize: '1920 x 1200 pixels (~224 ppi pixel density)',
-  os: 'Android 6.0 (Marshmallow)',
-  cpu: 'Quad-core 1.3 GHz Cortex-A53',
-  chipset: 'Mediatek MT8163A',
-  gpu: 'Mali-T720 MP2',
-  externalMemory: 'microSD  up to 256 GB (dedicated slot)',
-  internalMemory: ['16 GB', '32 GB', '64 GB'],
-  ram: '2 GB RAM',
-  primaryCamera: '5 MP',
-  secondaryCmera: '2 MP',
-  speaker: 'Yes with stereo speakers (4 speakers)',
-  audioJack: 'Yes',
-  wlan: ['Wi-Fi 802.11 a/b/g/n/ac', 'dual-band', 'hotspot'],
-  bluetooth: 'Yes',
-  gps: '',
-  nfc: '',
-  radio: 'No',
-  usb: 'microUSB 2.0',
-  sensors: 'Accelerometer',
-  battery: 'Non-removable Li-Ion battery',
-  colors: ['Black'],
-  options: {
-    colors: [
-      {
-        code: 1000,
-        name: 'Black',
-      },
-    ],
-    storages: [
-      {
-        code: 2000,
-        name: '16 GB',
-      },
-      {
-        code: 2001,
-        name: '32 GB',
-      },
-      {
-        code: 2002,
-        name: '64 GB',
-      },
-    ],
-  },
-};
+const IMAGE_MIN_WIDTH = 454;
+const IMAGE_MIN_HEIGHT = 601;
 
 const ProductDetailGrid = styled(Grid)({
   [mq.medium]: {
     gridTemplateColumns: p => `repeat(${p['columns-m']}, 1fr);`,
+    width: '100%',
   },
   [mq.small]: {
     gridTemplateColumns: p => `repeat(${p['columns-s']}, 1fr);`,
+    width: '100%',
   },
 });
 
@@ -93,21 +44,52 @@ const DetailCard = styled(Card)({
   [mq.large]: {
     minWidth: 350,
   },
-  [mq.small]: {
-    maxWidth: 300,
-  },
 });
 
 const TextFlex = styled(Flex)({
   [mq.small]: {
     flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+});
+
+const DetailImage = styled(Image)({
+  [mq.small]: {
+    minHeight: 'auto',
+    minWidth: 'auto',
+  },
+  [mq.medium]: {
+    minHeight: 'auto',
+    minWidth: 'auto',
   },
 });
 
 function ProductDetail() {
   const theme = useTheme();
-  return (
-    <Container>
+  let {id: deviceId} = useParams();
+  const {data: product, isLoading} = useDevice(deviceId);
+  const {mutate: handleAddItem, isLoading: isLoadingItemToCart} =
+    useAddItemToCart();
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+  } = useForm({
+    defaultValues: {colorCode: '', storageCode: ''},
+    shouldFocusError: false,
+  });
+
+  function handleAddItemToCart(data) {
+    handleAddItem({
+      id: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
+      ...data,
+    });
+  }
+
+  let view = null;
+  if (isLoading) view = <Spinner size={24} />;
+  else {
+    view = (
       <ProductDetailGrid
         columns={2}
         columns-s={1}
@@ -116,27 +98,24 @@ function ProductDetail() {
       >
         <DetailCard>
           <Flex justifyContent="center" alignItems="center">
-            <img
+            <DetailImage
               src={product.imgUrl}
               alt="device"
-              css={`
-                height: auto;
-                width: 90%;
-                margin-bottom: ${theme.space[5]};
-              `}
+              loading="lazy"
+              minWidth={IMAGE_MIN_WIDTH}
+              minHeight={IMAGE_MIN_HEIGHT}
             />
           </Flex>
-
           <H3>{product.brand}</H3>
           <H5>{product.model}</H5>
         </DetailCard>
 
         <Flex direction="column" gap={theme.space[4]}>
           <DetailCard>
-            <H4>Descripción de Producto</H4>
+            <H4>{dict.productDescription}</H4>
             <Flex direction="column" gap={theme.space[1]}>
               <TextFlex justifyContent="space-between" alignItems="center">
-                <Paragraph>CPU</Paragraph>
+                <Paragraph font={fontBold}>{dict.CPU}</Paragraph>
                 <Paragraph>{product.cpu}</Paragraph>
               </TextFlex>
               <TextFlex
@@ -144,7 +123,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>RAM</Paragraph>
+                <Paragraph font={fontBold}>{dict.RAM}</Paragraph>
                 <Paragraph>{product.ram}</Paragraph>
               </TextFlex>
               <TextFlex
@@ -152,7 +131,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>Sistema Operativo</Paragraph>
+                <Paragraph font={fontBold}>{dict.OS}</Paragraph>
                 <Paragraph>{product.os}</Paragraph>
               </TextFlex>
               <TextFlex
@@ -160,7 +139,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>Resolucion de pantalla</Paragraph>
+                <Paragraph font={fontBold}>{dict.displayResolution}</Paragraph>
                 <Paragraph maxWidth="50%">
                   {product.displayResolution}
                 </Paragraph>
@@ -170,7 +149,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>Bateria</Paragraph>
+                <Paragraph font={fontBold}>{dict.battery}</Paragraph>
                 <Paragraph>{product.battery}</Paragraph>
               </TextFlex>
               <TextFlex
@@ -178,7 +157,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>Camaras</Paragraph>
+                <Paragraph font={fontBold}>{dict.camera}</Paragraph>
                 <Paragraph>{product.primaryCamera}</Paragraph>
               </TextFlex>
               <TextFlex
@@ -186,7 +165,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>Dimensiones</Paragraph>
+                <Paragraph font={fontBold}>{dict.dimensions}</Paragraph>
                 <Paragraph>{product.dimentions}</Paragraph>
               </TextFlex>
               <TextFlex
@@ -194,51 +173,64 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>Peso</Paragraph>
+                <Paragraph font={fontBold}>{dict.weight}</Paragraph>
                 <Paragraph>{product.weight || '-'}</Paragraph>
               </TextFlex>
             </Flex>
           </DetailCard>
           <DetailCard>
             <H4>Acciones</H4>
-            <Flex direction="column" gap={theme.space[1]}>
-              <Flex
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Dropdown label="Color">
-                  <Option selected value="Click to see options" />
-                  <Option value="Option 1" />
-                  <Option value="Option 2" />
-                  <Option value="Option 3" />
-                </Dropdown>
-              </Flex>
+            <Form onSubmit={handleSubmit(handleAddItemToCart)}>
+              <Flex direction="column" gap={theme.space[3]}>
+                <FormElement error={errors.colorCode}>
+                  <Dropdown
+                    label={dict.color}
+                    {...register('colorCode', {
+                      required: {message: 'Campo Requerido', value: true},
+                    })}
+                    id="color"
+                  >
+                    <Option disabled value="" label={dict.selectOne} />
+                    <Option value="1" label="Blanco" />
+                    <Option value="2" label="Negro" />
+                  </Dropdown>
+                </FormElement>
+                <FormElement error={errors.storageCode}>
+                  <Dropdown
+                    label={dict.storage}
+                    {...register('storageCode', {
+                      required: {
+                        message: 'Campo Requerido',
+                        value: true,
+                      },
+                    })}
+                    id="storage"
+                  >
+                    <Option disabled value="" label={dict.selectOne} />
+                    <Option value="1" label="64gb" />
+                    <Option value="2" label="128gb" />
+                  </Dropdown>
+                </FormElement>
 
-              <Flex
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Dropdown label="Almacenamiento">
-                  <Option selected value="Click to see options" />
-                  <Option value="Option 1" />
-                  <Option value="Option 2" />
-                  <Option value="Option 3" />
-                </Dropdown>
+                <PrimaryButton type="submit" disabled={isLoadingItemToCart}>
+                  <Flex alignItems="center" justifyContent="center">
+                    {dict.addToCart}
+                    {isLoadingItemToCart ? (
+                      <Spinner css={{marginLeft: 10}} />
+                    ) : (
+                      <FiShoppingCart css={{marginLeft: 10}} />
+                    )}
+                  </Flex>
+                </PrimaryButton>
               </Flex>
-
-              <PrimaryButton>
-                <Flex alignItems="center" justifyContent="center">
-                  Agregar al Carrito <FiShoppingCart css={{marginLeft: 10}} />
-                </Flex>
-              </PrimaryButton>
-            </Flex>
+            </Form>
           </DetailCard>
         </Flex>
       </ProductDetailGrid>
-    </Container>
-  );
+    );
+  }
+
+  return <Container>{view}</Container>;
 }
 
 export default ProductDetail;
