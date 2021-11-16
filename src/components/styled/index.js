@@ -13,3 +13,4 @@ export * from './BadgeIcon';
 export * from './ImagePlaceholder';
 export * from './Image';
 export * from './Input';
+export * from './Breadcrumb';

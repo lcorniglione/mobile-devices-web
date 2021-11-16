@@ -1,4 +1,4 @@
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 
 import NavBar from 'components/NavBar';
 import Products from 'components/Products';
@@ -16,6 +16,7 @@ function AppRouter() {
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/" element={<Navigate to="/products" />} />
       </Routes>
     </BrowserRouter>
   );

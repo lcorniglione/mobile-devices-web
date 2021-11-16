@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 import {FiShoppingCart} from 'react-icons/fi';
 import {useQueryClient} from 'react-query';
 
-import {Link, Header, Flex, BadgeIcon} from 'components/styled';
+import {Header, BadgeIcon, Breadcrumb} from 'components/styled';
 
 function NavBar() {
   const queryClient = useQueryClient();
@@ -23,20 +23,14 @@ function NavBar() {
 
   return (
     <Header>
-      <Flex
-        css="min-width: 200px; height: 100%;"
-        alignItems="center"
-        justifyContent="space-around"
-      >
-        <BadgeIcon
-          iconCp={
-            <FiShoppingCart css="width: 28px; height: 28px; color: white;" />
-          }
-          count={cartCount}
-        />
+      <Breadcrumb />
 
-        <Link to="/products">Products</Link>
-      </Flex>
+      <BadgeIcon
+        iconCp={
+          <FiShoppingCart css="width: 28px; height: 28px; color: white;" />
+        }
+        count={cartCount}
+      />
     </Header>
   );
 }

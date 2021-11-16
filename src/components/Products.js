@@ -55,8 +55,13 @@ function Products() {
     );
 
   return (
-    <Container css="justify-content: flex-start;">
-      <Flex direction="column" gap={theme.space[5]} alignItems="center">
+    <Container css="justify-content: flex-start; min-width: 80%;">
+      <Flex
+        direction="column"
+        css="width: 100%;"
+        gap={theme.space[5]}
+        alignItems="center"
+      >
         <Flex
           css="width: 100%"
           alignItems="center"

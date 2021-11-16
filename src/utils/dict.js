@@ -19,6 +19,7 @@ const dict = {
     selectOne: 'Seleccione uno',
     addToCart: 'Agregar al Carrito',
     productDescription: 'Descripción de Producto',
+    anErrorOcurred: 'Ha ocurrido un error',
   },
 };
 
