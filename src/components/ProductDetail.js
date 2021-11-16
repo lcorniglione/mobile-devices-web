@@ -19,16 +19,24 @@ import {
   Spinner,
   Form,
   FormElement,
+  Image,
 } from 'components/styled';
 import * as mq from 'styles/mediaQueries';
 import {useDevice, useAddItemToCart} from 'hooks/devices';
+import {fontBold} from 'styles';
+import dict from 'utils/dict';
+
+const IMAGE_MIN_WIDTH = 454;
+const IMAGE_MIN_HEIGHT = 601;
 
 const ProductDetailGrid = styled(Grid)({
   [mq.medium]: {
     gridTemplateColumns: p => `repeat(${p['columns-m']}, 1fr);`,
+    width: '100%',
   },
   [mq.small]: {
     gridTemplateColumns: p => `repeat(${p['columns-s']}, 1fr);`,
+    width: '100%',
   },
 });
 
@@ -36,14 +44,23 @@ const DetailCard = styled(Card)({
   [mq.large]: {
     minWidth: 350,
   },
-  [mq.small]: {
-    maxWidth: 300,
-  },
 });
 
 const TextFlex = styled(Flex)({
   [mq.small]: {
     flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+});
+
+const DetailImage = styled(Image)({
+  [mq.small]: {
+    minHeight: 'auto',
+    minWidth: 'auto',
+  },
+  [mq.medium]: {
+    minHeight: 'auto',
+    minWidth: 'auto',
   },
 });
 
@@ -81,27 +98,24 @@ function ProductDetail() {
       >
         <DetailCard>
           <Flex justifyContent="center" alignItems="center">
-            <img
+            <DetailImage
               src={product.imgUrl}
               alt="device"
-              css={`
-                height: auto;
-                width: 90%;
-                margin-bottom: ${theme.space[5]};
-              `}
+              loading="lazy"
+              minWidth={IMAGE_MIN_WIDTH}
+              minHeight={IMAGE_MIN_HEIGHT}
             />
           </Flex>
-
           <H3>{product.brand}</H3>
           <H5>{product.model}</H5>
         </DetailCard>
 
         <Flex direction="column" gap={theme.space[4]}>
           <DetailCard>
-            <H4>Descripción de Producto</H4>
+            <H4>{dict.productDescription}</H4>
             <Flex direction="column" gap={theme.space[1]}>
               <TextFlex justifyContent="space-between" alignItems="center">
-                <Paragraph>CPU</Paragraph>
+                <Paragraph font={fontBold}>{dict.CPU}</Paragraph>
                 <Paragraph>{product.cpu}</Paragraph>
               </TextFlex>
               <TextFlex
@@ -109,7 +123,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>RAM</Paragraph>
+                <Paragraph font={fontBold}>{dict.RAM}</Paragraph>
                 <Paragraph>{product.ram}</Paragraph>
               </TextFlex>
               <TextFlex
@@ -117,7 +131,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>Sistema Operativo</Paragraph>
+                <Paragraph font={fontBold}>{dict.OS}</Paragraph>
                 <Paragraph>{product.os}</Paragraph>
               </TextFlex>
               <TextFlex
@@ -125,7 +139,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>Resolucion de pantalla</Paragraph>
+                <Paragraph font={fontBold}>{dict.displayResolution}</Paragraph>
                 <Paragraph maxWidth="50%">
                   {product.displayResolution}
                 </Paragraph>
@@ -135,7 +149,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>Bateria</Paragraph>
+                <Paragraph font={fontBold}>{dict.battery}</Paragraph>
                 <Paragraph>{product.battery}</Paragraph>
               </TextFlex>
               <TextFlex
@@ -143,7 +157,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>Camaras</Paragraph>
+                <Paragraph font={fontBold}>{dict.camera}</Paragraph>
                 <Paragraph>{product.primaryCamera}</Paragraph>
               </TextFlex>
               <TextFlex
@@ -151,7 +165,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>Dimensiones</Paragraph>
+                <Paragraph font={fontBold}>{dict.dimensions}</Paragraph>
                 <Paragraph>{product.dimentions}</Paragraph>
               </TextFlex>
               <TextFlex
@@ -159,7 +173,7 @@ function ProductDetail() {
                 alignItems="center"
                 gap={theme.space[1]}
               >
-                <Paragraph>Peso</Paragraph>
+                <Paragraph font={fontBold}>{dict.weight}</Paragraph>
                 <Paragraph>{product.weight || '-'}</Paragraph>
               </TextFlex>
             </Flex>
@@ -170,20 +184,20 @@ function ProductDetail() {
               <Flex direction="column" gap={theme.space[3]}>
                 <FormElement error={errors.colorCode}>
                   <Dropdown
-                    label="Color"
+                    label={dict.color}
                     {...register('colorCode', {
                       required: {message: 'Campo Requerido', value: true},
                     })}
                     id="color"
                   >
-                    <Option disabled value="" label="Seleccione uno" />
+                    <Option disabled value="" label={dict.selectOne} />
                     <Option value="1" label="Blanco" />
                     <Option value="2" label="Negro" />
                   </Dropdown>
                 </FormElement>
                 <FormElement error={errors.storageCode}>
                   <Dropdown
-                    label="Almacenamiento"
+                    label={dict.storage}
                     {...register('storageCode', {
                       required: {
                         message: 'Campo Requerido',
@@ -192,7 +206,7 @@ function ProductDetail() {
                     })}
                     id="storage"
                   >
-                    <Option disabled value="" label="Seleccione uno" />
+                    <Option disabled value="" label={dict.selectOne} />
                     <Option value="1" label="64gb" />
                     <Option value="2" label="128gb" />
                   </Dropdown>
@@ -200,7 +214,7 @@ function ProductDetail() {
 
                 <PrimaryButton type="submit" disabled={isLoadingItemToCart}>
                   <Flex alignItems="center" justifyContent="center">
-                    Agregar al Carrito
+                    {dict.addToCart}
                     {isLoadingItemToCart ? (
                       <Spinner css={{marginLeft: 10}} />
                     ) : (

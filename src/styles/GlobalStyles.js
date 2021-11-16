@@ -22,4 +22,11 @@ export const GlobalStyle = createGlobalStyle`
         width: 90%;
         maring: 0 auto;
     }
+    input[type=text]:active,
+    input[type=text]:focus {
+        border: 1px solid #FFFFFF;
+        background-color: #FAFAFA;
+        box-shadow: none;
+        outline:none;
+    }   
 `;

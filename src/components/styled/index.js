@@ -10,3 +10,6 @@ export * from './Button';
 export * from './Spinner';
 export * from './Form';
 export * from './BadgeIcon';
+export * from './ImagePlaceholder';
+export * from './Image';
+export * from './Input';

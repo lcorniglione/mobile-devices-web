@@ -2,6 +2,13 @@ import styled from 'styled-components';
 
 import {typeScale} from 'styles';
 
+export const H1 = styled.h3({
+  fontSize: typeScale.header1,
+  fontFamily: p => p.font || p.theme.fonts.semiBold,
+  marginBottom: p => p.theme.space[0],
+  color: p => p.color || p.theme.colors.black,
+});
+
 export const H3 = styled.h3({
   fontSize: typeScale.header3,
   fontFamily: p => p.font || p.theme.fonts.semiBold,
